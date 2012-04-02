@@ -19,7 +19,7 @@ public class SerialService implements SerialPortEventListener {
 	private static final String PORT_NAMES[] = { 
 			"/dev/tty.usbserial-A9007UX1", // Mac OS X
 			"/dev/ttyUSB0", // Linux
-			"COM3", // Windows
+			"COM6", // Windows
 	};
 
 	public static final int SIZEOF_CODE = 4;

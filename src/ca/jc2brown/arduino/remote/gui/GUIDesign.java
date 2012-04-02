@@ -14,28 +14,45 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.DateTime;
 
 public class GUIDesign extends Shell {
 	
-	public static final String CODE_STR = "Code";
-	public static final String NAME_STR = "Name";
-	public static final String ARGS_STR = "Arguments";
-	public static final String KEY_STR = "Key";
-	public static final String CMD_STR = "Command";
+	public static final String CODE_STR 	= "Code";
+	public static final String NAME_STR 	= "Name";
+	public static final String ARGS_STR 	= "Arguments";
+	public static final String KEY_STR 		= "Key";
+	public static final String CMD_STR 		= "Command";
+	public static final String AUTO_STR 	= "Auto";
+	public static final String TR1_STR 		= "Trigger 1";
+	public static final String TR2_STR 		= "Trigger 2";
 	
-	private Text txtKey;
-	private Text txtName;
-	private Text txtCmd;
-	private Text txtCode;
+	
 	private Table table;
 	TableColumn tblclmnCode;
 	TableColumn tblclmnName;
 	TableColumn tblclmnKey;
 	TableColumn tblclmnCommand;
 	TableColumn tblclmnArguments;
+	TableColumn tblclmnAuto;
+	TableColumn tblclmnTr1;
+	TableColumn tblclmnTr2;
+	
+	private Text txtKey;
+	private Text txtName;
+	private Text txtCmd;
+	private Text txtCode;
 	private Link link;
 	private Text txtArgs;
+	private Button enableAuto;
+	private DateTime dtTr1;
+	private DateTime dtTr2;
+	private Button btnNew;
+	private Button btnDelete;
+	private Button btnClear;
+	private Button btnExecute;
 	private Button btnSave;
+	private Button btnEq;
 
 	/**
 	 * Launch the application.
@@ -92,57 +109,81 @@ public class GUIDesign extends Shell {
 		Group grpCommands = new Group(this, SWT.NONE);
 		grpCommands.setLayout(new GridLayout(1, false));
 		GridData gd_grpCommands = new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1);
-		gd_grpCommands.widthHint = 862;
+		gd_grpCommands.widthHint = 1000;
 		gd_grpCommands.heightHint = 590;
 		grpCommands.setLayoutData(gd_grpCommands);
 		grpCommands.setText("Commands");
 		
 		table = new Table(grpCommands, SWT.BORDER | SWT.FULL_SELECTION);
 		GridData gd_table = new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1);
-		gd_table.widthHint = 728;
+		gd_table.widthHint = 1000;
 		gd_table.heightHint = 573;
 		table.setLayoutData(gd_table);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
 		tblclmnCode = new TableColumn(table, SWT.NONE);
-		tblclmnCode.setWidth(73);
+		tblclmnCode.setMoveable(true);
+		tblclmnCode.setResizable(false);
+		tblclmnCode.setWidth(80);
 		tblclmnCode.setText(CODE_STR);
 		
 		tblclmnName = new TableColumn(table, SWT.NONE);
-		tblclmnName.setWidth(102);
+		tblclmnName.setMoveable(true);
+		tblclmnName.setWidth(110);
 		tblclmnName.setText(NAME_STR);
 		
 		tblclmnKey = new TableColumn(table, SWT.NONE);
-		tblclmnKey.setWidth(52);
+		tblclmnKey.setMoveable(true);
+		tblclmnKey.setWidth(80);
 		tblclmnKey.setText(KEY_STR);
 		
 		tblclmnCommand = new TableColumn(table, SWT.NONE);
-		tblclmnCommand.setWidth(300);
+		tblclmnCommand.setMoveable(true);
+		tblclmnCommand.setWidth(100);
 		tblclmnCommand.setText(CMD_STR);
 		
 		tblclmnArguments = new TableColumn(table, SWT.NONE);
-		tblclmnArguments.setWidth(194);
+		tblclmnArguments.setMoveable(true);
+		tblclmnArguments.setWidth(230);
 		tblclmnArguments.setText(ARGS_STR);
+		
+		tblclmnAuto = new TableColumn(table, SWT.NONE);
+		tblclmnAuto.setMoveable(true);
+		tblclmnAuto.setResizable(false);
+		tblclmnAuto.setWidth(50);
+		tblclmnAuto.setText("Auto");
+		
+		tblclmnTr1 = new TableColumn(table, SWT.NONE);
+		tblclmnTr1.setResizable(false);
+		tblclmnTr1.setMoveable(true);
+		tblclmnTr1.setWidth(60);
+		tblclmnTr1.setText("Trigger 1");
+		
+		tblclmnTr2 = new TableColumn(table, SWT.NONE);
+		tblclmnTr2.setResizable(false);
+		tblclmnTr2.setMoveable(true);
+		tblclmnTr2.setWidth(60);
+		tblclmnTr2.setText("Trigger 2");
 		
 		Group grpTest = new Group(this, SWT.NONE);
 		grpTest.setText("Edit Command");
 		grpTest.setLayout(new GridLayout(3, false));
 		GridData gd_grpTest = new GridData(SWT.LEFT, SWT.CENTER, true, true, 2, 1);
 		gd_grpTest.heightHint = 624;
-		gd_grpTest.widthHint = 500;
+		gd_grpTest.widthHint = 600;
 		grpTest.setLayoutData(gd_grpTest);
+		new Label(grpTest, SWT.NONE);
+		new Label(grpTest, SWT.NONE);
+		new Label(grpTest, SWT.NONE);
 		
-		Button btnNew = new Button(grpTest, SWT.NONE);
+		btnNew = new Button(grpTest, SWT.NONE);
 		btnNew.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		btnNew.setText("New");
 		new Label(grpTest, SWT.NONE);
 		
-		Button btnDelete = new Button(grpTest, SWT.NONE);
+		btnDelete = new Button(grpTest, SWT.NONE);
 		btnDelete.setText("Delete");
-		new Label(grpTest, SWT.NONE);
-		new Label(grpTest, SWT.NONE);
-		new Label(grpTest, SWT.NONE);
 		new Label(grpTest, SWT.NONE);
 		new Label(grpTest, SWT.NONE);
 		new Label(grpTest, SWT.NONE);
@@ -205,17 +246,51 @@ public class GUIDesign extends Shell {
 		new Label(grpTest, SWT.NONE);
 		new Label(grpTest, SWT.NONE);
 		new Label(grpTest, SWT.NONE);
+		
+		Label lblAuto = new Label(grpTest, SWT.NONE);
+		lblAuto.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblAuto.setText("Auto");
+		
+		enableAuto = new Button(grpTest, SWT.CHECK);
+		new Label(grpTest, SWT.NONE);
+		new Label(grpTest, SWT.NONE);
+		new Label(grpTest, SWT.NONE);
+		new Label(grpTest, SWT.NONE);
+		
+		Label lblOnTime = new Label(grpTest, SWT.NONE);
+		lblOnTime.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblOnTime.setText("Trigger 1");
+		
+		dtTr1 = new DateTime(grpTest, SWT.BORDER | SWT.TIME | SWT.SHORT);
+		new Label(grpTest, SWT.NONE);
+		new Label(grpTest, SWT.NONE);
+		
+		btnEq = new Button(grpTest, SWT.NONE);
+		btnEq.setText(" = ");
+		new Label(grpTest, SWT.NONE);
+		
+		Label lblOffTime = new Label(grpTest, SWT.NONE);
+		lblOffTime.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblOffTime.setText("Trigger 2");
+		
+		dtTr2 = new DateTime(grpTest, SWT.BORDER | SWT.TIME | SWT.SHORT);
+		new Label(grpTest, SWT.NONE);
 		new Label(grpTest, SWT.NONE);
 		new Label(grpTest, SWT.NONE);
 		new Label(grpTest, SWT.NONE);
 		
 		btnSave = new Button(grpTest, SWT.NONE);
-		btnSave.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		btnSave.setText("Save");
 		new Label(grpTest, SWT.NONE);
 		
-		Button btnClear = new Button(grpTest, SWT.NONE);
+		btnClear = new Button(grpTest, SWT.NONE);
 		btnClear.setText("Clear");
+		new Label(grpTest, SWT.NONE);
+		
+		btnExecute = new Button(grpTest, SWT.NONE);
+		btnExecute.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnExecute.setText("Execute");
+		new Label(grpTest, SWT.NONE);
 		createContents();
 	}
 
@@ -224,7 +299,7 @@ public class GUIDesign extends Shell {
 	 */
 	protected void createContents() {
 		setText("SWTplication");
-		setSize(1146, 628);
+		setSize(1250, 628);
 
 	}
 

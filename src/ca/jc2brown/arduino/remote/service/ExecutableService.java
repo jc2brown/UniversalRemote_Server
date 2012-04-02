@@ -24,10 +24,14 @@ public class ExecutableService {
 	
 	private static final String DAT_FILE = "exes.dat";
 	
+	private TimerService timerService;
+	
 	private Set<Executable> exeSet;
 	private Map<Long, Executable> exeMap;
 	
-	public ExecutableService() {
+	public ExecutableService(TimerService timerService) {
+		
+		this.timerService = timerService;
 		
 		exeSet = new TreeSet<Executable>();
 		exeMap = new HashMap<Long, Executable>();		
@@ -68,6 +72,7 @@ public class ExecutableService {
 		exeSet.remove(exe);
 		exeSet.add(exe);
 		exeMap.put(exe.getCode(), exe);
+		timerService.add(exe);
 	}
 	
 	public void save(Executable exe) {

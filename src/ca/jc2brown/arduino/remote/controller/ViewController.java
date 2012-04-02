@@ -78,6 +78,12 @@ public class ViewController {
 			cmp = Executable.CMP_CMD;	
 		} else if ( sortColumn.equals(View.ARGS_STR) ) {
 			cmp = Executable.CMP_ARGS;	
+		} else if ( sortColumn.equals(View.AUTO_STR) ) {
+			cmp = Executable.CMP_TR1;	
+		} else if ( sortColumn.equals(View.TR1_STR) ) {
+			cmp = Executable.CMP_TR1;	
+		} else if ( sortColumn.equals(View.TR2_STR) ) {
+			cmp = Executable.CMP_TR2;	
 		}
 		
 		Collections.sort(exeList, cmp);
@@ -185,6 +191,15 @@ public class ViewController {
 		}		
 	};
 	
+	public SelectionListener eqListener = new SelectionListener() {
+		public void widgetDefaultSelected(SelectionEvent event) {}
+		public void widgetSelected(SelectionEvent event) {	
+			view.dtTr2.setHours(   view.dtTr1.getHours()   );
+			view.dtTr2.setMinutes( view.dtTr1.getMinutes() );
+			//updateView();
+		}		
+	};
+	
 	public SelectionListener cmdLinkListener = new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent event) {}
 		public void widgetSelected(SelectionEvent event) {
@@ -199,9 +214,9 @@ public class ViewController {
 	public SelectionListener selectListener = new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent event) {}
 		public void widgetSelected(SelectionEvent event) {
-			edit = false;
 			Long code = view.getSelectedCode();
 			Executable exe = exeService.getExe(code);
+			edit = ( (event.stateMask & SWT.BUTTON3) != 0 );
 			activeCode = exe.getCode();
 			updateView();
 		}		

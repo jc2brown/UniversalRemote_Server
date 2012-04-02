@@ -13,6 +13,7 @@ import ca.jc2brown.arduino.remote.controller.ViewController;
 import ca.jc2brown.arduino.remote.model.Executable;
 import ca.jc2brown.arduino.remote.service.ExecutableService;
 import ca.jc2brown.arduino.remote.service.SerialService;
+import ca.jc2brown.arduino.remote.service.TimerService;
 import ca.jc2brown.arduino.remote.util.StreamGobbler;
 import ca.jc2brown.arduino.remote.util.Util;
 
@@ -23,6 +24,7 @@ public class Remote {
 	
 	private SerialService serialService;
 	private ExecutableService exeService;
+	private TimerService timerService;
 		
 	private ViewController viewController;
 	private OSDController osdController;
@@ -42,12 +44,13 @@ public class Remote {
 	
 	public void setup() {
 		debug("Setup start");
-		
+
+		Display.setAppName("Remote Control");
 		display = Display.getDefault();
 		
-		exeService = new ExecutableService();
-		
-		serialService = new SerialService(115200, display);
+		serialService = new SerialService(115200, display);		
+		timerService = new TimerService(serialService);
+		exeService = new ExecutableService(timerService);
 
 		serialController = new SerialController(serialService);
 		viewController = new ViewController(serialService, exeService, display);
@@ -88,6 +91,7 @@ public class Remote {
 	
 	
 	public boolean loop() {
+		timerService.check();
 		osdController.handleOSD();
 		// Nothing to do?
 		if ( ! serialController.isCodeAvailable() ) {
@@ -112,6 +116,12 @@ public class Remote {
 		}
 		debug("Executing " + exe.getCmd() + " " + exe.getArgs());
 		execute(exe);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lastExe = exe;
 		osdController.showOSD(lastExe);
 		return false;
@@ -119,34 +129,66 @@ public class Remote {
 	
 	
 	public void execute(Executable exe) {
+		String[] argArray = exe.getArgs().split(" ");
 		if ( exe.getCmd().startsWith("hardware") ) {
-			String args = exe.getArgs();
-			Byte b = (byte) (Byte.parseByte(args) - 1);
+			int addr = Integer.parseInt(argArray[0]) - 1;
+			int ctrl = 2;
+			
+			if ( argArray[1].contains("high") ) {
+				ctrl = 1;
+			} else if ( argArray[1].contains("low") ) {
+				ctrl = 0;
+			} else if ( argArray[1].contains("toggle") ) {
+				ctrl = 3;
+			}
+
+			byte b = (byte)((ctrl << 6) | (addr & 0x3F));
 			try {
-				serialService.write(b);
+				serialService.write( b );
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			return;
 		}
 		
-		String[] argArray = exe.getArgs().split(" ");
-		List<String> argList = new ArrayList<String>();
-		argList.add(exe.getCmd());
-		argList.addAll(Arrays.asList(argArray));
+		
+		List<String> argList = parseArgString( exe.getArgs() );
+		argList.add(0, exe.getCmd() );
 		ProcessBuilder pb = new ProcessBuilder(argList);
 		try {
 			Process p = pb.start();
 			new Thread(new StreamGobbler(p.getInputStream())).start();
-			p.waitFor();
+			//p.waitFor();
 			
 		} catch (IOException e) {
 			System.err.println("Execution error");
 			e.printStackTrace();
-		} catch (InterruptedException e) {
+		/*} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace();*/
 		}
+	}
+	
+	
+	public List<String> parseArgString(String str) {
+		List<String> list = new ArrayList<String>();
+		String spacejunk = "KSPSAPCAECJEUJNUKN";
+		String q = "\"";
+		String space = "\\s";
+		StringBuilder sb = new StringBuilder();
+		String[] quotes = str.split(q);
+		for ( int i = 0; i < quotes.length; i++ ) {
+			if ( str.contains(q+quotes[i]+q) ) {
+				quotes[i] = quotes[i].replaceAll(space, spacejunk);
+			}
+			sb.append(quotes[i]);
+		}
+		String[] args = sb.toString().split(space);
+		for ( int i = 0; i < args.length; i++ ) {
+			args[i] = args[i].replaceAll(spacejunk, " ");
+			list.add(args[i]);
+		}
+		return list;
 	}
 	
 		
